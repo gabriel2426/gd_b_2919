@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import CardWrapper from '@/app/ui/dashboard/cards';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
@@ -8,6 +9,10 @@ import {
   RevenueChartSkeleton,
 } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+};
 
 export default function Page() {
   return (
