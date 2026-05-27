@@ -5,7 +5,8 @@
     "dev": "next dev --turbopack",
     "seed": "node --env-file=.env.local scripts/seed.js",
     "test:db": "node --env-file=.env.local scripts/test-db.js",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -28,7 +29,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
-    "@types/react-dom": "19.0.3"
+    "@types/react-dom": "19.0.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.6"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
