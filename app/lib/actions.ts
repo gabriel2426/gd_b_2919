@@ -133,3 +133,69 @@ export async function deleteInvoice(id: string) {
     return { message: 'Database Error: Failed to Delete Invoice.' };
   }
 }
+
+const ProfileSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required.' }),
+  email: z.string().email({ message: 'Invalid email address.' }),
+});
+
+export type ProfileState = {
+  errors?: {
+    name?: string[];
+    email?: string[];
+  };
+  message?: string | null;
+};
+
+export async function updateProfile(
+  id: string,
+  prevState: ProfileState,
+  formData: FormData,
+) {
+  const validatedFields = ProfileSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Update Profile.',
+    };
+  }
+
+  const { name, email } = validatedFields.data;
+  const password = formData.get('password') as string;
+
+  try {
+    if (password && password.length >= 6) {
+      const bcrypt = await import('bcrypt');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await sql`
+        UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword}
+        WHERE id = ${id}
+      `;
+    } else {
+      await sql`
+        UPDATE users SET name = ${name}, email = ${email}
+        WHERE id = ${id}
+      `;
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: 'Database Error: Failed to Update Profile.' };
+  }
+
+  revalidatePath('/dashboard/profile');
+  redirect('/dashboard/profile');
+}
+
+export async function deleteProfile(id: string, formData?: FormData) {
+  try {
+    await sql`DELETE FROM users WHERE id = ${id}`;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete profile.');
+  }
+  redirect('/');
+}
