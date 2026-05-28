@@ -128,14 +128,14 @@ export async function updateInvoice(
   redirect('/dashboard/invoices');
 }
 
-export async function deleteInvoice(id: string) {
+export async function deleteInvoice(id: string, formData?: FormData) {
   try {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath('/dashboard/invoices');
   } catch (error) {
     console.error(error);
-    return { message: 'Database Error: Failed to Delete Invoice.' };
+    throw new Error('Failed to Delete Invoice.');
   }
+  revalidatePath('/dashboard/invoices');
 }
 
 const ProfileSchema = z.object({
